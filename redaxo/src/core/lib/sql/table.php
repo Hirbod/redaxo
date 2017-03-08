@@ -11,6 +11,8 @@ class rex_sql_table
 {
     use rex_instance_pool_trait;
 
+    const FIRST = 'FIRST '; // The space is intended: column names cannot end with space
+
     /** @var rex_sql */
     private $sql;
 
@@ -122,10 +124,11 @@ class rex_sql_table
 
     /**
      * @param rex_sql_column $column
+     * @param null|string    $after  Column name or `rex_sql_table::FIRST`
      *
      * @return $this
      */
-    public function addColumn(rex_sql_column $column)
+    public function addColumn(rex_sql_column $column, $after = null)
     {
         $name = $column->getName();
 
@@ -140,15 +143,16 @@ class rex_sql_table
 
     /**
      * @param rex_sql_column $column
+     * @param null|string    $after  Column name or `rex_sql_table::FIRST`
      *
      * @return $this
      */
-    public function ensureColumn(rex_sql_column $column)
+    public function ensureColumn(rex_sql_column $column, $after = null)
     {
         $name = $column->getName();
 
         if (!$this->hasColumn($name)) {
-            return $this->addColumn($column);
+            return $this->addColumn($column, $after);
         }
 
         if ($this->getColumn($name)->equals($column)) {
